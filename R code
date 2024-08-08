@@ -1,0 +1,256 @@
+# Load necessary libraries for data manipulation, visualization, and model fitting
+library(readr)     # For reading CSV files
+library(tidyverse) # For data wrangling and visualization
+library(lubridate) # For handling date and time data
+library(ggplot2)   # For data visualization
+library(dplyr)     # For data manipulation
+library(tidyr)     # For data cleaning
+library(geosphere) # For geographic calculations
+library(car)       # For Variance Inflation Factor (VIF) analysis
+library(gridExtra) # For arranging multiple plots in a grid
+
+# Import the Telco customer churn dataset
+Dataset_churn <- read_csv("/path/to/your/Dataset_churn.csv")  # Update path to your CSV file
+
+# Inspect the first few rows and dimensions of the dataset
+head(Dataset_churn)
+dim(Dataset_churn)
+
+# The data set contains 7043 rows and 20 columns. Next, we will check for unique values from each column in the data.
+
+# Check for unique values in each column to understand categorical variables
+df_columns <- names(Dataset_churn)
+for (column in df_columns) {
+  unique_values <- unique(Dataset_churn[[column]])
+  cat(sprintf("%s unique values: %s\n", column, paste(unique_values, collapse = ", ")))
+}
+
+# Data Understanding
+# Classification Label
+# Churn — Whether the customer churned or not (Yes or No)
+
+# Services Each Customer Has to Sign Up
+# PhoneService — Whether the customer has a phone service or not (Yes or No)
+# MultipleLines — Whether the customer has multiple lines or not (Yes, No, No phone service)
+# InternetService — A type of internet service the customer has (DSL, Fiber Optic, No)
+# OnlineSecurity — Whether the customer has online security or not (Yes, No, No Internet Service)
+# OnlineBackup — Whether the customer has online backup or not (Yes, No, No Internet Service)
+# DeviceProtection — Whether the customer has device protection or not (Yes, No, No Internet Service)
+# TechSupport — Whether the customer has tech support or not (Yes, No, No Internet Service)
+# StreamingTV — Whether the customer has a streaming TV (Yes, No, No Internet Service)
+# StreamingMovies — Whether the customer has a streaming movie (Yes, No, No Internet Service)
+
+# Customer Account Information
+# Tenure — How long customer has stayed with the company
+# Contract — The type of contract the customer has (Month-to-Month, One year, Two years)
+# PaperlessBilling — Whether the customer has paperless billing (Yes, No)
+# PaymentMethod — Payment method used by the customer (Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic))
+# MonthlyCharges — Amount charged to the customer monthly
+# TotalCharges — The total amount charged to the customer
+
+# Customer Demographic Info
+# CustomerID — Unique value for each customer
+# gender — The type of gender each customer (Female, Male)
+# SeniorCitizen — Whether the customer is a senior citizen (Yes, No)
+# Partner — Whether the customer has a partner or not (Yes, No)
+# Dependents — Whether the customer has a dependent or not (Yes, No)
+
+# Get descriptive statistics for numerical columns
+summary(Dataset_churn)
+
+# The average customer stayed with the company for 32 months and 75% of customers have a tenure of 55 months.
+# The average monthly charges are USD 64.76 and 25% of customers pay more than USD 89.85.
+# Based on Chebyshev’s Theorem and the Empirical Rules, each numerical variable doesn’t have an outlier.
+
+# Inspect the structure of the data
+str(Dataset_churn)
+
+# Check for missing values in each column
+missing_percentage <- colSums(is.na(Dataset_churn)) / nrow(Dataset_churn) * 100
+missing_stats <- data.frame(Column = names(missing_percentage), Missing_Percentage = missing_percentage)
+print(missing_stats)
+
+# So only about 0.15% missing values are present
+
+# Clean the data:
+# - Remove rows with any missing values
+# - Trim extra spaces from character columns
+
+# Remove rows with any missing values
+Dataset_churn_clean <- na.omit(Dataset_churn)
+
+# Function to trim extra spaces from character columns
+trim_spaces <- function(x) {
+  if (is.character(x)) {
+    return(trimws(x))
+  } else {
+    return(x)
+  }
+}
+
+# Apply trimming function to each column
+Dataset_churn_clean <- as.data.frame(lapply(Dataset_churn_clean, trim_spaces))
+
+# Print the cleaned dataset (optional: to verify the cleaning process)
+print(Dataset_churn_clean)
+
+# Analysis of churn distribution
+# Visualize the distribution of the Churn variable
+ggplot(data = Dataset_churn, aes(x = Churn)) +
+  geom_bar(fill = "blue") +
+  theme_minimal() +
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) +
+  labs(title = "Churn Distribution", x = "Churn", y = "Count")
+
+# Analysis of Services Each Customer Has to Sign Up
+# Function to plot categorical variables against churn
+plot_categorical_to_target <- function(df, categorical_values, target) {
+  plots <- lapply(categorical_values, function(column) {
+    ggplot(data = df, aes_string(x = column, fill = target)) +
+      geom_bar(position = "dodge") +
+      scale_fill_brewer(palette = "Blues") +
+      theme_minimal() +
+      labs(title = column, x = column, y = "Count")
+  })
+  grid.arrange(grobs = plots, ncol = 2)
+}
+
+# List of categorical columns related to customer services
+customer_services <- c("PhoneService", "MultipleLines", "InternetService", "OnlineSecurity", 
+                        "OnlineBackup", "DeviceProtection", "TechSupport", "StreamingTV", "StreamingMovies")
+plot_categorical_to_target(Dataset_churn, customer_services, "Churn")
+
+# Analysis of Customer Account Information — Categorical Variables
+customer_account_cat <- c("Contract", "PaperlessBilling", "PaymentMethod")
+plot_categorical_to_target(Dataset_churn, customer_account_cat, "Churn")
+
+# Analysis of Customer Account Information — Numerical Variables
+# Function to create density plots for numerical variables
+histogram_plots <- function(df, numerical_values, target) {
+  plots <- lapply(numerical_values, function(column) {
+    ggplot(data = df, aes_string(x = column, color = target, fill = target)) +
+      geom_density(alpha = 0.5) +
+      scale_fill_brewer(palette = "Blues") +
+      scale_color_brewer(palette = "Blues") +
+      theme_minimal() +
+      labs(title = column, x = column, y = "Density") +
+      theme(legend.position = "upper right")
+  })
+  grid.arrange(grobs = plots, ncol = 2)
+}
+
+# List of numerical columns to visualize
+customer_account_num <- c("tenure", "MonthlyCharges", "TotalCharges")
+histogram_plots(Dataset_churn, customer_account_num, "Churn")
+
+# Analysis of Customer's Demographic Info
+# Function to create bar plots for categorical variables
+plot_categorical_to_target <- function(df, categorical_values, target) {
+  plots <- lapply(categorical_values, function(column) {
+    ggplot(data = df, aes_string(x = column, fill = target)) +
+      geom_bar(position = "dodge", color = "black", alpha = 0.7) +
+      scale_fill_brewer(palette = "Blues") +
+      theme_minimal() +
+      labs(title = column, x = column, y = "Count") +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+            plot.title = element_text(hjust = 0.5))
+  })
+  grid.arrange(grobs = plots, ncol = 2)
+}
+
+# List of categorical columns for demographic info
+customer_categorical <- c("gender", "SeniorCitizen", "Partner", "Dependents")
+plot_categorical_to_target(Dataset_churn, customer_categorical, "Churn")
+
+# The following bar plots provide insights into:
+# - Gender has no significant difference in churn rates.
+# - Younger customers are more likely to churn.
+# - Customers with a partner are less likely to churn compared to those without a partner.
+
+# Prepare data for regression model
+
+# Import data to excel for inspect linear regression
+# Inspect for cullinear regression
+# Function to perform label encoding for categorical columns
+label_encode <- function(df, cols) {
+  df[cols] <- lapply(df[cols], function(x) as.numeric(factor(x)) - 1)
+  return(df)
+}
+
+# List of columns to label encode
+label_cols <- c('Partner', 'Dependents', 'PhoneService', 'PaperlessBilling', 'Churn',
+                 'gender', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 
+                 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 
+                 'Contract', 'PaymentMethod')
+Dataset_churn <- label_encode(Dataset_churn, label_cols)
+
+# Add polynomial terms for curvilinear regression
+Dataset_churn <- Dataset_churn %>%
+  mutate(
+    tenure_sq = tenure^2,
+    tenure_cub = tenure^3,
+    MonthlyCharges_sq = MonthlyCharges^2,
+    MonthlyCharges_cub = MonthlyCharges^3
+  )
+
+# The multiple curvilinear regression modeL is still not fit
+
+# Logistic Regression Analysis
+
+# Load necessary libraries
+library(caret)   # For data partitioning and model evaluation
+library(pROC)    # For ROC curve and AUC calculation
+
+# Inspect column names of the dataset
+colnames(Dataset_churn_1)
+
+# Remove the first column which is likely an index
+Dataset_churn_1 <- Dataset_churn_1 %>%
+  select(-`...1`)
+
+# Split the data into training and testing sets
+set.seed(123)  # Set seed for reproducibility
+split <- createDataPartition(Dataset_churn_1$Churn, p = 0.8, list = FALSE)
+train_data <- Dataset_churn_1[split, ]
+test_data <- Dataset_churn_1[-split, ]
+
+# Fit a logistic regression model
+logistic_model <- glm(
+  Churn ~ gender + SeniorCitizen + Partner + Dependents +
+          tenure + tenure_sq + tenure_cub + MonthlyCharges +
+          MonthlyCharges_sq + MonthlyCharges_cub + TotalCharges +
+          PhoneService + PaperlessBilling +
+          `MultipleLinesNo phone service` + `MultipleLinesYes` +
+          `InternetServiceFiber optic` + `InternetServiceNo` +
+          `OnlineSecurityNo internet service` + `OnlineSecurityYes` +
+          `OnlineBackupNo internet service` + `OnlineBackupYes` +
+          `DeviceProtectionNo internet service` + `DeviceProtectionYes` +
+          `TechSupportNo internet service` + `TechSupportYes` +
+          `StreamingTVNo internet service` + `StreamingTVYes` +
+          `StreamingMoviesNo internet service` + `StreamingMoviesYes` +
+          `ContractOne year` + `ContractTwo year` +
+          `PaymentMethodCredit card (automatic)` + `PaymentMethodElectronic check` +
+          `PaymentMethodMailed check`,
+  data = train_data,
+  family = binomial
+)
+
+# Display the summary of the logistic regression model
+model_summary <- summary(logistic_model)
+print(model_summary)
+
+# Predict on the test data
+test_predictions <- predict(logistic_model, test_data, type = "response")
+
+# Convert probabilities to binary predictions using a threshold (e.g., 0.5)
+test_predictions_binary <- ifelse(test_predictions > 0.5, 1, 0)
+
+# Evaluate the model
+confusion_matrix <- confusionMatrix(as.factor(test_predictions_binary), as.factor(test_data$Churn))
+print(confusion_matrix)
+
+# Calculate ROC curve and AUC
+roc_curve <- roc(test_data$Churn, test_predictions)
+auc_value <- auc(roc_curve)
+cat("AUC:", auc_value, "\n")
+
