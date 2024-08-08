@@ -37,3 +37,29 @@ When interpreting the results and applying the findings to real-world scenarios,
 `tidyverse`, `dplyr`, `ggplot2`, `caret`, `pROC`, `lubridate`, `geosphere`, `gridExtra`, `RColorBrewer`
 
 
+
+## Data Cleaning
+
+### Inspecting the Dataset
+
+The dataset contains 7043 rows and 20 columns. To gain an understanding of the categorical variables, we will check the unique values in each column.
+
+**Descriptive Statistics for Numerical Columns**
+- The average customer has stayed with the company for 32 months, with 75% of customers having a tenure of 55 months.
+- The average monthly charges amount to USD 64.76, while 25% of customers pay more than USD 89.85.
+- Based on Chebyshev’s Theorem and the Empirical Rules, no significant outliers are detected in the numerical variables.
+
+**Inspect the Structure of the Data**
+- Check the data structure to ensure all columns are correctly formatted.
+
+**Check for Missing Values**
+- Identify and quantify missing values in each column.
+
+## Analysis Process
+
+## Analysis Process
+
+**Analysis of Churn Distribution**
+- **Visualize the Distribution of the Churn Variable**: Create visualizations to illustrate the distribution of the Churn variable, which helps in understanding the balance between churned and non-churned customers.
+- **Finding**: The dataset exhibits an imbalanced distribution of churn, with a higher proportion of non-churned customers compared to churned customers. This imbalance suggests that the prediction model may be biased toward the majority class.
+
