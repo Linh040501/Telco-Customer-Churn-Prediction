@@ -1,6 +1,8 @@
 # Telco Customer Churn Prediction
 
-This project utilizes machine learning techniques and the R programming language to predict customer churn for Telco, a telecommunications company. The goal is to identify and analyze key variables influencing customer churn and to provide actionable insights for enhancing customer retention strategies.
+This project utilizes machine learning techniques and the R programming language to predict customer churn for Telco, a telecommunications company. The primary objective is to identify and analyze key variables influencing customer churn and to provide actionable insights for enhancing customer retention strategies.
+
+Logistic regression is employed for predicting customer churn, as it is specifically designed for binary outcomes (e.g., churn or no churn). This makes it a suitable choice for determining whether a customer will churn. However, to gain a comprehensive understanding, additional models such as linear regression and curvilinear regression will be explored.
 
 ### Research Question
 
