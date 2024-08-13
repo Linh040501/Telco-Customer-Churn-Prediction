@@ -119,7 +119,45 @@ The dataset contains 7043 rows and 20 columns. To gain an understanding of the c
 ### Logistic Regression Model
 
 - **Coefficients**: The coefficients of the logistic regression model provide insight
-<img width="863" alt="Screen Shot 2024-08-08 at 14 57 56" src="https://github.com/user-attachments/assets/fdea38bb-1a60-41be-b3dc-fc15e3dec290">
+<img width="723" alt="Screen Shot 2024-08-13 at 16 02 14" src="https://github.com/user-attachments/assets/f2bf055a-eebf-481b-964a-35ec02ba7436">
+
+## Logistic Regression Model Results
+
+### Significant Predictors
+
+- **Tenure**: Negative estimate (-0.1466), indicating that as tenure increases, the likelihood of churn decreases. The p-value is very small (<<0.05), making it highly significant.
+
+- **Tenure Squared**: Positive estimate (0.0036), showing a non-linear effect of tenure on churn. The p-value is very small (<<0.05), making it highly significant.
+
+- **Tenure Cubed**: Negative estimate (-0.00003), indicating a cubic effect of tenure on churn. The p-value is very small (<<0.05), making it highly significant.
+
+- **Monthly Charges**: Positive estimate (0.0916), meaning higher monthly charges are associated with higher churn. The p-value is small (<0.05), making it significant.
+
+- **Senior Citizen**: Positive estimate (0.2312), indicating that senior citizens are more likely to churn. The p-value is small (<0.01), making it significant.
+
+- **Phone Service**: Negative estimate (-1.334), showing that customers with phone service are less likely to churn. The p-value is very small (<<0.05), making it highly significant.
+
+- **Paperless Billing**: Positive estimate (0.3599), indicating that customers with paperless billing are more likely to churn. The p-value is very small (<<0.05), making it highly significant.
+
+- **Online Security (Yes)**: Negative estimate (-0.5749), showing that customers with online security are less likely to churn. The p-value is very small (<<0.05), making it highly significant.
+
+- **Online Backup (Yes)**: Negative estimate (-0.3753), indicating that having online backup is associated with lower churn. The p-value is small (<0.01), making it significant.
+
+- **Tech Support (Yes)**: Negative estimate (-0.5485), showing that customers with tech support are less likely to churn. The p-value is very small (<<0.05), making it highly significant.
+
+- **Contract (One Year)**: Negative estimate (-0.7153), indicating that a one-year contract is associated with reduced churn. The p-value is very small (<<0.05), making it highly significant.
+
+- **Contract (Two Years)**: Negative estimate (-1.5143), showing that a two-year contract is even more associated with reduced churn. The p-value is very small (<<0.01), making it very significant.
+
+- **Payment Method (Electronic Check)**: Positive estimate (0.2587), indicating that paying via electronic check is associated with higher churn. The p-value is small (<0.01), making it significant.
+
+### Non-Significant Predictors
+
+- **Gender, Partner, Dependents, etc.**: These predictors have p-values > 0.05, indicating they are not significant in predicting churn in this model.
+
+- **McFadden's R-squared: 0.295**:This indicates that the model explains about 29.5% of the variability in the data, which is a reasonable fit for a logistic regression model.
+
+<img width="238" alt="Screen Shot 2024-08-13 at 16 19 52" src="https://github.com/user-attachments/assets/b86c93b5-0408-4ceb-93db-9ff3d3b6ab58">
 
 
 - **ROC Curve**
