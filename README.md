@@ -162,13 +162,13 @@ The dataset contains 7043 rows and 20 columns. To gain an understanding of the c
 
 - **ROC Curve**
 
-  <img width="254" alt="Screen Shot 2024-08-08 at 16 44 10" src="https://github.com/user-attachments/assets/c2eebb73-2066-4a69-b395-f0960bc454a2">
+  ![Rplot](https://github.com/user-attachments/assets/fec91023-19fd-4586-96d6-a0abd51c4d4b)
+
 
 - **Model Accuracy**: The model accuracy is 0.8259, indicating that approximately 82.59% of the predictions made by the logistic regression model are correct. This metric provides a general measure of how well the model is performing in classifying instances correctly.
 
-- **AUC (Area Under the Curve)**: The AUC is 0.869, which indicates a high level of model performance. An AUC value of 0.869 means that the model has a strong ability to distinguish between the positive and negative classes, with a higher AUC reflecting better model performance.
-<img width="874" alt="Screen Shot 2024-08-08 at 14 58 58" src="https://github.com/user-attachments/assets/7ebf4611-45f5-408e-aa98-7ece1c20cf2b">
+- **AUC (Area Under the Curve)**: An AUC of 0.85 indicates that the model has a high level of discrimination. Specifically, there is an 85% chance that the model will correctly rank a randomly chosen churn case higher than a randomly chosen non-churn case.
 
+- **Threshold**:A threshold of 0.28 means that if the model predicts a probability of 0.28 or higher for a customer, that customer is classified as "Churn" (i.e., predicted to churn). If the predicted probability is below 0.28, the customer is classified as "No Churn"
 
-
-
+These my due to The dataset exhibits an imbalanced class distribution, with 73.4% of observations representing non-churn and 26.6% representing churn
