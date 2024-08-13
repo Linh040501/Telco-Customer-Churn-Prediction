@@ -57,7 +57,6 @@ The dataset contains 7043 rows and 20 columns. To gain an understanding of the c
 **Check for Missing Values**
 - Identify and quantify missing values in each column.
 
-## Analysis Process
 
 ## Analysis Process
 
