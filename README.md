@@ -2,7 +2,7 @@
 
 This project utilizes machine learning techniques and the R programming language to predict customer churn for Telco, a telecommunications company. The primary objective is to identify and analyze key variables influencing customer churn and to provide actionable insights for enhancing customer retention strategies.
 
-Logistic regression is employed for predicting customer churn, as it is specifically designed for binary outcomes (e.g., churn or no churn). This makes it a suitable choice for determining whether a customer will churn. However, to gain a comprehensive understanding, additional models such as linear regression and curvilinear regression will be explored.
+ **NOTE:** Logistic regression is employed for predicting customer churn, as it is specifically designed for binary outcomes (e.g., churn or no churn). This makes it a suitable choice for determining whether a customer will churn. However, to gain a comprehensive understanding, additional models such as linear regression and curvilinear regression will be explored.
 
 ### Research Question
 
@@ -173,3 +173,33 @@ These my due to The dataset exhibits an imbalanced class distribution, with 73.4
 - **Model Accuracy**: The model accuracy is 0.8259, indicating that approximately 82.59% of the predictions made by the logistic regression model are correct. This metric provides a general measure of how well the model is performing in classifying instances correctly.
 
 <img width="369" alt="Screen Shot 2024-08-13 at 17 06 56" src="https://github.com/user-attachments/assets/c749c0db-848c-41fd-97e0-4fdc7abdeadf">
+
+
+## Recommendations Based on Logistic Regression Analysis
+
+Based on the logistic regression output, here are key variables and corresponding recommendations for Telco:
+
+1. **`tenure`**:
+   - **Estimate**: -0.1466
+   - **p-value**: < 2.2e-16
+   - **Recommendation**: Focus on retaining long-term customers by providing them with exclusive benefits or loyalty programs. Since longer-tenured customers are less likely to churn, efforts should be made to enhance their satisfaction and engagement.
+
+2. **`SeniorCitizen`**:
+   - **Estimate**: 0.2312
+   - **p-value**: 0.0065
+   - **Recommendation**: Implement targeted retention strategies for senior citizens, such as personalized support, simplified service options, or special offers tailored to their needs, to reduce their likelihood of churning.
+
+3. **`OnlineSecurityYes`**:
+   - **Estimate**: -0.5749
+   - **p-value**: < 2.2e-16
+   - **Recommendation**: Promote the benefits of online security services to customers, emphasizing its role in reducing churn. Consider offering online security as a standard feature or providing discounts to encourage its adoption.
+
+4. **`ContractTwo year`**:
+   - **Estimate**: -1.5143
+   - **p-value**: < 2.2e-16
+   - **Recommendation**: Encourage customers to sign longer-term contracts, such as two-year plans, by offering incentives, discounts, or added benefits. This approach helps increase customer retention and reduces the likelihood of churn.
+
+5. **`PaymentMethodElectronic check`**:
+   - **Estimate**: 0.2587
+   - **p-value**: 0.0065
+   - **Recommendation**: Evaluate the factors contributing to churn among customers using electronic checks. Consider improving the payment process or offering alternative payment options that might reduce the likelihood of churn associated with this method.
