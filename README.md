@@ -104,7 +104,6 @@ The dataset contains 7043 rows and 20 columns. To gain an understanding of the c
 - **P-Value Analysis**: The p-values for some independent variables are greater than 0.05, suggesting that these variables may not have a significant effect on the outcome variable. It's crucial to consider the significance of predictors when selecting the best model. Variables with high p-values may be candidates for removal if they do not contribute meaningfully to the model's performance.
 **Finding the Best Model**
 <img width="598" alt="Screen Shot 2024-08-08 at 16 18 28" src="https://github.com/user-attachments/assets/7de9cbae-f0ab-4cab-8c20-fd330ffe5da2">
-### Finding the Best Model
 
 - **R-Squared and Adjusted R-Squared**: The R-squared value of 0.273 indicates that only 27.3% of the variance in the dependent variable is explained by the model. The adjusted R-squared has increased slightly from 0.271 to 0.272, suggesting that this model is a better fit compared to previous iterations.
 - **F-Test and T-Test**: Both the F-test and T-test results support the model's validity. All p-values are less than 0.05, indicating that the predictors are statistically significant at the 95% confidence level.
