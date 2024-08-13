@@ -171,20 +171,33 @@ plot_categorical_to_target(Dataset_churn, customer_categorical, "Churn")
 
 # Import data to excel for inspect linear regression
 # Inspect for cullinear regression
-# Function to perform label encoding for categorical columns
+# Function to perform label encoding
 label_encode <- function(df, cols) {
-  df[cols] <- lapply(df[cols], function(x) as.numeric(factor(x)) - 1)
+  for (col in cols) {
+    # Convert column to factor
+    df[[col]] <- as.factor(df[[col]])
+    
+    # Convert factor to numeric labels
+    df[[col]] <- as.numeric(df[[col]]) - 1
+  }
+  
   return(df)
 }
 
 # List of columns to label encode
-label_cols <- c('Partner', 'Dependents', 'PhoneService', 'PaperlessBilling', 'Churn',
-                 'gender', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 
-                 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 
-                 'Contract', 'PaymentMethod')
+label_cols <- c('Partner', 'Dependents', 'PhoneService', 'PaperlessBilling', 'Churn')
+
+# Apply label encoding to the dataset
 Dataset_churn <- label_encode(Dataset_churn, label_cols)
 
-# Add polynomial terms for curvilinear regression
+# Label encode other specified columns
+other_label_cols <- c('gender', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 
+                      'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 
+                      'PaymentMethod')
+
+Dataset_churn <- label_encode(Dataset_churn, other_label_cols)
+# build multiple curvilinear regression
+# Prepare polynomial terms
 Dataset_churn <- Dataset_churn %>%
   mutate(
     tenure_sq = tenure^2,
@@ -193,7 +206,33 @@ Dataset_churn <- Dataset_churn %>%
     MonthlyCharges_cub = MonthlyCharges^3
   )
 
-# The multiple curvilinear regression modeL is still not fit
+# Fit the multiple curvilinear regression model
+model <- lm(Churn ~ tenure + tenure_sq + tenure_cub + MonthlyCharges + MonthlyCharges_sq + MonthlyCharges_cub +
+              Partner + Dependents + PhoneService + PaperlessBilling +
+              InternetService + OnlineSecurity + OnlineBackup +
+              DeviceProtection + TechSupport + Contract + 
+              PaperlessBilling + TotalCharges,
+            data = Dataset_churn)
+
+# Display the summary of the model
+model_summary <- summary(model)
+print(model_summary)
+
+# Extract R-squared, Adjusted R-squared, and F-statistic
+r_squared <- model_summary$r.squared
+adj_r_squared <- model_summary$adj.r.squared
+f_statistic <- model_summary$fstatistic[1]
+f_statistic_p_value <- pf(f_statistic, model_summary$fstatistic[2], model_summary$fstatistic[3], lower.tail = FALSE)
+
+cat("Multiple R:", sqrt(r_squared), "\n")
+cat("R-squared:", r_squared, "\n")
+cat("Adjusted R-squared:", adj_r_squared, "\n")
+cat("F-statistic:", f_statistic, "\n")
+cat("Significance F:", f_statistic_p_value, "\n")
+# Extract coefficients, standard errors, t-values, and p-values
+coef_summary <- as.data.frame(model_summary$coefficients)
+print(coef_summary)
+# multiple curvilinear regression is not the best model
 
 # Logistic Regression Analysis
 
