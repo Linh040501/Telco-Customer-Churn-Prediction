@@ -236,43 +236,137 @@ print(coef_summary)
 
 # Logistic Regression Analysis
 
-# Load necessary libraries
-library(caret)   # For data partitioning and model evaluation
-library(pROC)    # For ROC curve and AUC calculation
-
-# Inspect column names of the dataset
+col(Dataset_churn_1)
 colnames(Dataset_churn_1)
+# build new regression model
+# Load necessary libraries
+library(dplyr)
 
-# Remove the first column which is likely an index
+# Prepare polynomial terms for the dataset
+Dataset_churn_1 <- Dataset_churn_1 %>%
+  mutate(
+    tenure_sq = tenure^2,
+    tenure_cub = tenure^3,
+    MonthlyCharges_sq = MonthlyCharges^2,
+    MonthlyCharges_cub = MonthlyCharges^3
+  )
+
+# Fit the multiple curvilinear regression model
+model <- lm(Churn ~ tenure + tenure_sq + tenure_cub + MonthlyCharges + MonthlyCharges_sq + MonthlyCharges_cub +
+              `Partner` + `Dependents` + `PhoneService` + `PaperlessBilling` +
+              `InternetServiceFiber optic` + `InternetServiceNo` + 
+              `OnlineSecurityYes` + `OnlineSecurityNo internet service` + 
+              `OnlineBackupYes` + `OnlineBackupNo internet service` + 
+              `DeviceProtectionYes` + `DeviceProtectionNo internet service` + 
+              `TechSupportYes` + `TechSupportNo internet service` + 
+              `StreamingTVYes` + `StreamingTVNo internet service` + 
+              `StreamingMoviesYes` + `StreamingMoviesNo internet service` + 
+              `ContractOne year` + `ContractTwo year` + 
+              `PaymentMethodCredit card (automatic)` + `PaymentMethodElectronic check` + 
+              `PaymentMethodMailed check` + 
+              `TotalCharges`,
+            data = Dataset_churn_1)
+
+# Display the summary of the model
+model_summary <- summary(model)
+print(model_summary)
+
+# Extract R-squared, Adjusted R-squared, and F-statistic
+r_squared <- model_summary$r.squared
+adj_r_squared <- model_summary$adj.r.squared
+f_statistic <- model_summary$fstatistic[1]
+f_statistic_p_value <- pf(f_statistic, model_summary$fstatistic[2], model_summary$fstatistic[3], lower.tail = FALSE)
+
+cat("Multiple R:", sqrt(r_squared), "\n")
+cat("R-squared:", r_squared, "\n")
+cat("Adjusted R-squared:", adj_r_squared, "\n")
+cat("F-statistic:", f_statistic, "\n")
+cat("Significance F:", f_statistic_p_value, "\n")
+
+# Perform ANOVA on the regression model
+anova_results <- anova(model)
+print(anova_results)
+
+# Extract coefficients, standard errors, t-values, and p-values
+coef_summary <- as.data.frame(model_summary$coefficients)
+print(coef_summary)
+
+
+
+
+# Fit the linear regression model
+linear_model <- lm(Churn ~ tenure + MonthlyCharges +
+                     Partner + Dependents + PhoneService + PaperlessBilling +
+                     `InternetServiceFiber optic` + `InternetServiceNo` + 
+                     `OnlineSecurityYes` + `OnlineSecurityNo nternet service` + 
+                     `OnlineBackupYes` + `OnlineBackupNo internet service` + 
+                     `DeviceProtectionYes` + `DeviceProtectionNo internet service` + 
+                     `TechSupportYes` + `TechSupportNo internet service` + 
+                     `StreamingTVYes` + `StreamingTVNo internet service` + 
+                     `StreamingMoviesYes` + `StreamingMoviesNo internet service` + 
+                     `ContractOne year` + `ContractTwo year` + 
+                     `PaymentMethodCredit card (automatic)` + `PaymentMethodElectronic check` + 
+                     `PaymentMethodMailed check` + 
+                     TotalCharges,
+                   data = Dataset_churn_1)
+
+# Display the summary of the model
+linear_model_summary <- summary(linear_model)
+print(linear_model_summary)
+
+# Extract R-squared, Adjusted R-squared, and F-statistic
+r_squared_linear <- linear_model_summary$r.squared
+adj_r_squared_linear <- linear_model_summary$adj.r.squared
+f_statistic_linear <- linear_model_summary$fstatistic[1]
+f_statistic_p_value_linear <- pf(f_statistic_linear, linear_model_summary$fstatistic[2], linear_model_summary$fstatistic[3], lower.tail = FALSE)
+
+cat("Multiple R:", sqrt(r_squared_linear), "\n")
+cat("R-squared:", r_squared_linear, "\n")
+cat("Adjusted R-squared:", adj_r_squared_linear, "\n")
+cat("F-statistic:", f_statistic_linear, "\n")
+cat("Significance F:", f_statistic_p_value_linear, "\n")
+
+# Perform ANOVA on the regression model
+anova_results_linear <- anova(linear_model)
+print(anova_results_linear)
+
+# Extract coefficients, standard errors, t-values, and p-values
+coef_summary_linear <- as.data.frame(linear_model_summary$coefficients)
+print(coef_summary_linear)
+
+# Logistic Regression
+colnames(Dataset_churn_1)
+# Load necessary libraries
+library(caret)
+library(pROC)
+
+# Remove the first column which is likely just an index
 Dataset_churn_1 <- Dataset_churn_1 %>%
   select(-`...1`)
 
 # Split the data into training and testing sets
-set.seed(123)  # Set seed for reproducibility
+set.seed(123)
 split <- createDataPartition(Dataset_churn_1$Churn, p = 0.8, list = FALSE)
 train_data <- Dataset_churn_1[split, ]
 test_data <- Dataset_churn_1[-split, ]
 
 # Fit a logistic regression model
-logistic_model <- glm(
-  Churn ~ gender + SeniorCitizen + Partner + Dependents +
-          tenure + tenure_sq + tenure_cub + MonthlyCharges +
-          MonthlyCharges_sq + MonthlyCharges_cub + TotalCharges +
-          PhoneService + PaperlessBilling +
-          `MultipleLinesNo phone service` + `MultipleLinesYes` +
-          `InternetServiceFiber optic` + `InternetServiceNo` +
-          `OnlineSecurityNo internet service` + `OnlineSecurityYes` +
-          `OnlineBackupNo internet service` + `OnlineBackupYes` +
-          `DeviceProtectionNo internet service` + `DeviceProtectionYes` +
-          `TechSupportNo internet service` + `TechSupportYes` +
-          `StreamingTVNo internet service` + `StreamingTVYes` +
-          `StreamingMoviesNo internet service` + `StreamingMoviesYes` +
-          `ContractOne year` + `ContractTwo year` +
-          `PaymentMethodCredit card (automatic)` + `PaymentMethodElectronic check` +
-          `PaymentMethodMailed check`,
-  data = train_data,
-  family = binomial
-)
+logistic_model <- glm(Churn ~ gender + SeniorCitizen + Partner + Dependents +
+                        tenure + tenure_sq + tenure_cub + MonthlyCharges +
+                        MonthlyCharges_sq + MonthlyCharges_cub + TotalCharges +
+                        PhoneService + PaperlessBilling +
+                        `MultipleLinesNo phone service` + `MultipleLinesYes` +
+                        `InternetServiceFiber optic` + `InternetServiceNo` +
+                        `OnlineSecurityNo internet service` + `OnlineSecurityYes` +
+                        `OnlineBackupNo internet service` + `OnlineBackupYes` +
+                        `DeviceProtectionNo internet service` + `DeviceProtectionYes` +
+                        `TechSupportNo internet service` + `TechSupportYes` +
+                        `StreamingTVNo internet service` + `StreamingTVYes` +
+                        `StreamingMoviesNo internet service` + `StreamingMoviesYes` +
+                        `ContractOne year` + `ContractTwo year` +
+                        `PaymentMethodCredit card (automatic)` + `PaymentMethodElectronic check` +
+                        `PaymentMethodMailed check`,
+                      data = train_data, family = binomial)
 
 # Display the summary of the logistic regression model
 model_summary <- summary(logistic_model)
@@ -292,4 +386,3 @@ print(confusion_matrix)
 roc_curve <- roc(test_data$Churn, test_predictions)
 auc_value <- auc(roc_curve)
 cat("AUC:", auc_value, "\n")
-
