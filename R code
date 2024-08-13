@@ -386,3 +386,19 @@ print(confusion_matrix)
 roc_curve <- roc(test_data$Churn, test_predictions)
 auc_value <- auc(roc_curve)
 cat("AUC:", auc_value, "\n")
+
+# Calculate model accuracy
+library(caret)
+
+# Generate the confusion matrix
+confusion_matrix <- confusionMatrix(as.factor(test_predictions_binary), as.factor(test_data$Churn))
+
+# Print the confusion matrix
+print(confusion_matrix)
+
+# Calculate accuracy from the confusion matrix
+conf_matrix <- confusion_matrix$table
+
+# Calculate accuracy
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+cat("Model Accuracy:", accuracy, "\n")
